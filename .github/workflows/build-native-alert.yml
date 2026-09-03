@@ -1,0 +1,31 @@
+name: Build New WS Native Alert
+
+on:
+  push:
+    branches:
+      - fix/whatsapp-native-alert
+  workflow_dispatch:
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install root dependencies
+        run: npm install
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+      - name: Build frontend
+        run: npm run build-frontend
+      - name: Build Windows x64 installer
+        run: npm run build-w-64
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: NewWS-Native-WhatsApp-Alert-Windows-x64
+          path: out/*
+          if-no-files-found: error
